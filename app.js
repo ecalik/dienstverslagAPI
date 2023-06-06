@@ -14,7 +14,7 @@ async function checkAndCreateAdminUser() {
   try {
     const user = await User.findOne({ role: "admin" });
     if (!user) {
-      const password = await ph.hash("Password1!");
+      const password = await ph.hash(process.env.DEFAULT_USER_PW);
       const newUser = new User({
         firstName: "Admin",
         lastName: "Admin",

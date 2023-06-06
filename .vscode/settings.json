@@ -1,0 +1,14 @@
+{
+  "editor.formatOnSave": true,
+  "editor.fontFamily": "Fira Code",
+  //"editor.fontWeight": "500",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "editor.fontLigatures": true,
+  "editor.fontSize": 13,
+  "editor.fontVariations": false,
+  "diffEditor.codeLens": false,
+  "editor.codeActionsOnSave": {}
+}

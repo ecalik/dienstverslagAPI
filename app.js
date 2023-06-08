@@ -1,14 +1,25 @@
+const fs = require("fs");
+const path = require("path");
+const https = require("https");
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const helmet = require("helmet");
+const ph = require("argon2");
+const morgan = require("morgan");
+require("dotenv").config();
 
 const reportRoutes = require("./routes/reportRoutes");
 const userRoutes = require("./routes/userRoutes");
 const User = require("./models/userModel");
-const ph = require("argon2");
-require("dotenv").config();
+
+const privateKey = fs.readFileSync("server.key");
+const certificate = fs.readFileSync("server.cert");
 
 const app = express();
+const logStream = fs.createWriteStream(path.join(__dirname, "access.log"), {
+  flags: "a",
+});
 
 async function checkAndCreateAdminUser() {
   try {
@@ -45,15 +56,20 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(morgan("combined", { stream: logStream }));
+app.use(helmet());
+
 app.use("/report", reportRoutes);
 app.use("/user", userRoutes);
 
 mongoose
-  .connect(process.env.DB_URL)
+  .connect("mongodb://127.0.0.1:27017")
   .then(() => {
     checkAndCreateAdminUser().then(() => {
       console.log("DB connection succesfull");
-      const server = app.listen(3000);
+      const server =
+        //https.createServer({ key: privateKey, cert: certificate }, app)
+        app.listen(process.env.PORT || 3000);
       const io = require("./socket").init(server);
       io.on("connection", (socket) => {
         // Handle new socket connections
